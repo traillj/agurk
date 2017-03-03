@@ -20,7 +20,7 @@ public class Game {
     private Deck deck;
     private Player[] players;
     
-    private int leadPlayer = 0;
+    private int leadPlayer = 2;
     
     public Game(int numPlayers) {
         deck = new Deck();
@@ -42,24 +42,35 @@ public class Game {
         return listHand;
     }
     
-    public TrickInfo startNonLastTrick() {
+    // Assume Player 0 is the non-AI player
+    public TrickInfo startNonLastTrick() throws NoStrategyException {
         TrickInfo trickInfo = new TrickInfo();
         trickInfo.cardsPlayed = new LinkedList<Integer>();
-        int playerNum;
         
-        for (int i = 0; i < players.length; i++) {
-            playerNum = (leadPlayer + i) % players.length;
-            try {
-                aiPlayerTurn(trickInfo, playerNum);
-            } catch (NoStrategyException e) {
-                break;
-            }
+        if (leadPlayer == 0) {
+            // non-AI player requires external input
+            return trickInfo;
         }
         
-        // temporary
-        leadPlayer = trickInfo.highestPlayPlayer;
-        
+        for (int i = leadPlayer; i < players.length; i++) {
+            aiPlayerTurn(trickInfo, i);
+        }
         return trickInfo;
+    }
+    
+    public TrickInfo finishNonLastTrick(TrickInfo trickInfo)
+            throws NoStrategyException {
+        TrickInfo newTrickInfo = new TrickInfo();
+        newTrickInfo.cardsPlayed = new LinkedList<Integer>();
+        newTrickInfo.highestPlay = trickInfo.highestPlay;
+        newTrickInfo.highestPlayPlayer = trickInfo.highestPlayPlayer;
+        
+        for (int i = 1; i < leadPlayer; i++) {
+            aiPlayerTurn(newTrickInfo, i);
+        }
+        
+        leadPlayer = newTrickInfo.highestPlayPlayer;
+        return newTrickInfo;
     }
     
     private void aiPlayerTurn(TrickInfo trickInfo, int playerNum)
@@ -80,8 +91,7 @@ public class Game {
     public StringBuilder showHands() {
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < players.length; i++) {
-            out.append("Player " + i + ": "
-                    + players[i].showHand(deck) + '\n');
+            out.append("Player " + i + ": " + players[i].showHand() + '\n');
         }
         return out;
     }

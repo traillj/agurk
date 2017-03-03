@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 
-// Rank-only standard deck of 52 cards
+// Rank-only standard deck of 52 cards.
 // Maintains a list of the cards dealt, and keeps them
 // separate from the main deck.
 public class Deck {
@@ -56,7 +56,7 @@ public class Deck {
         return hand;
     }
     
-    public StringBuilder cardsToString(List<Integer> cards) {
+    public static StringBuilder cardsToString(List<Integer> cards) {
         StringBuilder out = new StringBuilder();
         if (cards.size() == 0) {
             return out;
@@ -70,7 +70,7 @@ public class Deck {
         return out;
     }
     
-    private char toSymbol(int rank) {
+    private static char toSymbol(int rank) {
         char symbol;
         if (rank < 10 && rank > 1) {
             symbol = (char)(rank + '0');

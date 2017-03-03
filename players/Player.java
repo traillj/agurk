@@ -20,8 +20,8 @@ public abstract class Player {
         
     }
     
-    public StringBuilder showHand(Deck deck) {
-        return deck.cardsToString(hand);
+    public StringBuilder showHand() {
+        return Deck.cardsToString(hand);
     }
     
     public abstract int chooseCard(int highestPlay)
