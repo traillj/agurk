@@ -3,28 +3,31 @@
  * Author: traillj
  */
 
-import java.util.Arrays;
+package players;
+
+import java.util.List;
 
 
-public class Player {
+public abstract class Player {
 
-    private int[] hand;
+    protected List<Integer> hand;
     
-    public void setHand(int[] hand) {
+    // Keep hand sorted always
+    public void setHand(List<Integer> hand) {
         this.hand = hand;
+        
     }
     
     public StringBuilder showHand() {
         StringBuilder out = new StringBuilder();
-        if (hand.length == 0) {
+        if (hand.size() == 0) {
             return out;
         }
         
-        Arrays.sort(hand);
         
-        out.append(toSymbol(hand[0]));
-        for (int i = 1; i < hand.length; i++) {
-            out.append(", " + toSymbol(hand[i]));
+        out.append(toSymbol(hand.get(0)));
+        for (int i = 1; i < hand.size(); i++) {
+            out.append("," + toSymbol(hand.get(i)));
         }
         
         return out;
@@ -51,4 +54,7 @@ public class Player {
         
         return symbol;
     }
+    
+    public abstract int chooseCard(int highestPlay)
+    throws NoStrategyException;
 }

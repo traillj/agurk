@@ -3,11 +3,15 @@
  * Author: traillj
  */
 
+package core;
+
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 
+// Rank-only standard deck
 public class Deck {
 
     private List<Integer> cards;
@@ -31,7 +35,8 @@ public class Deck {
         }
     }
     
-    // Choose and remove 7 cards at random from the deck
+    // Choose and remove 7 ranks at random from the deck
+    // Returns the ranks in sorted order
     public int[] dealHand() {
         int[] hand = new int[HAND_SIZE];
         Random rand = new Random();
@@ -45,6 +50,7 @@ public class Deck {
             removedCards.add(chosenCard);
         }
         
+        Arrays.sort(hand);
         return hand;
     }
 }
