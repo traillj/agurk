@@ -15,14 +15,8 @@ public class GameDriver {
     
     public static void main(String[] args) {
         Game game = new Game(NUM_PLAYERS);
-        
-        //System.out.print(game.showHands());
-        
-        /*try {
-            game.playNonLastTrick();
-        } catch (NoStrategyException e) {
-            System.out.print("Non-AI Player's turn");
-        }*/
+
+        //game.startNonLastTrick();
     }
 
 }

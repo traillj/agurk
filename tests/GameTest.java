@@ -9,8 +9,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import players.NoStrategyException;
-
 import core.Game;
 
 public class GameTest {
@@ -24,12 +22,7 @@ public class GameTest {
         // 7 cards per hand initially, last hand has different length
         for (int i = 0; i < 6; i++) {
             int prevHandLength = game.showHands().toString().length();
-            
-            try {
-                game.playNonLastTrick();
-            } catch (NoStrategyException e) {
-                fail("Game initialised with non-AI player.");
-            }
+            game.startNonLastTrick();
             
             // For 3 players the length should decrease by 6 each trick
             int handLength = game.showHands().toString().length();

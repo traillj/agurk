@@ -42,33 +42,46 @@ public class Game {
         return listHand;
     }
     
-    public int[] playNonLastTrick() throws NoStrategyException {
-        int highestPlay = 0;
-        int highestPlayPlayer = -1;
-        
-        int playerTurn, chosenCard;
-        int[] cardsPlayed = {0,0,0,0};
+    public TrickInfo startNonLastTrick() {
+        TrickInfo trickInfo = new TrickInfo();
+        trickInfo.cardsPlayed = new LinkedList<Integer>();
+        int playerNum;
         
         for (int i = 0; i < players.length; i++) {
-            playerTurn = (leadPlayer + i) % players.length;
-            chosenCard = players[playerTurn].chooseCard(highestPlay);
-            cardsPlayed[playerTurn] = chosenCard;
-            
-            if (chosenCard >= highestPlay) {
-                highestPlay = chosenCard;
-                highestPlayPlayer = playerTurn;
+            playerNum = (leadPlayer + i) % players.length;
+            try {
+                aiPlayerTurn(trickInfo, playerNum);
+            } catch (NoStrategyException e) {
+                break;
             }
-            //System.out.println(showHands());
         }
         
-        leadPlayer = highestPlayPlayer;
-        return cardsPlayed;
+        // temporary
+        leadPlayer = trickInfo.highestPlayPlayer;
+        
+        return trickInfo;
     }
     
+    private void aiPlayerTurn(TrickInfo trickInfo, int playerNum)
+            throws NoStrategyException {
+        
+        int chosenCard = players[playerNum].chooseCard(trickInfo.highestPlay);
+        trickInfo.cardsPlayed.add(chosenCard);
+        
+        // The last of equally high cards wins the trick,
+        // the winner leads the next trick.
+        if (chosenCard >= trickInfo.highestPlay) {
+            trickInfo.highestPlay = chosenCard;
+            trickInfo.highestPlayPlayer = playerNum;
+        }
+    }
+    
+    // for debugging
     public StringBuilder showHands() {
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < players.length; i++) {
-            out.append("Player " + i + ": " + players[i].showHand() + '\n');
+            out.append("Player " + i + ": "
+                    + players[i].showHand(deck) + '\n');
         }
         return out;
     }
