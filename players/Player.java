@@ -10,7 +10,7 @@ import java.util.List;
 import core.Deck;
 
 
-public abstract class Player {
+public class Player {
 
     protected List<Integer> hand;
     
@@ -20,10 +20,11 @@ public abstract class Player {
         
     }
     
-    public StringBuilder showHand() {
+    public String showHand() {
         return Deck.cardsToString(hand);
     }
     
-    public abstract int chooseCard(int highestPlay)
-    throws NoStrategyException;
+    public int chooseCard(int highestPlay) throws NoStrategyException {
+        throw new NoStrategyException();
+    }
 }

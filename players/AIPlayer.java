@@ -16,9 +16,7 @@ public class AIPlayer extends Player {
         this.strategy = strategy;
     }
 
-    @Override
-    public int chooseCard(int highestPlay) throws NoStrategyException {
-        
+    public int chooseCard(int highestPlay) {
         int chosenIndex = strategy.chooseIndex(hand, highestPlay);
         return hand.remove(chosenIndex);
     }

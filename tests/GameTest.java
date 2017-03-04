@@ -9,10 +9,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import players.NoStrategyException;
-
 import core.Game;
 import core.TrickInfo;
+
 
 public class GameTest {
 
@@ -25,12 +24,9 @@ public class GameTest {
         // 7 cards per hand initially, last hand has different length
         for (int i = 0; i < 6; i++) {
             int prevHandLength = game.showHands().toString().length();
-            try {
-                TrickInfo startTrickInfo = game.startNonLastTrick();
-                game.finishNonLastTrick(startTrickInfo);
-            } catch (NoStrategyException e) {
-                fail(e.getMessage());
-            }
+
+            TrickInfo startTrickInfo = game.startNonLastTrick();
+            game.finishNonLastTrick(startTrickInfo);
             
             System.out.println(game.showHands());
             

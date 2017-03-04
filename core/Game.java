@@ -15,6 +15,8 @@ import players.Player;
 import strategies.SharpStrategy;
 
 
+// Methods for playing components of the game
+// Player 0 is non-AI
 public class Game {
 
     private Deck deck;
@@ -22,11 +24,15 @@ public class Game {
     
     private int leadPlayer = 2;
     
+    // Number of players: 2-7
     public Game(int numPlayers) {
         deck = new Deck();
         players = new Player[numPlayers];
         
-        for (int i = 0; i < numPlayers; i++) {
+        players[0] = new Player();
+        players[0].setHand(makePlayerHand());
+        
+        for (int i = 1; i < numPlayers; i++) {
             players[i] = new AIPlayer(new SharpStrategy());
             players[i].setHand(makePlayerHand());
         }
@@ -42,8 +48,7 @@ public class Game {
         return listHand;
     }
     
-    // Assume Player 0 is the non-AI player
-    public TrickInfo startNonLastTrick() throws NoStrategyException {
+    public TrickInfo startNonLastTrick() {
         TrickInfo trickInfo = new TrickInfo();
         trickInfo.cardsPlayed = new LinkedList<Integer>();
         
@@ -58,8 +63,7 @@ public class Game {
         return trickInfo;
     }
     
-    public TrickInfo finishNonLastTrick(TrickInfo trickInfo)
-            throws NoStrategyException {
+    public TrickInfo finishNonLastTrick(TrickInfo trickInfo) {
         TrickInfo newTrickInfo = new TrickInfo();
         newTrickInfo.cardsPlayed = new LinkedList<Integer>();
         newTrickInfo.highestPlay = trickInfo.highestPlay;
@@ -73,10 +77,15 @@ public class Game {
         return newTrickInfo;
     }
     
-    private void aiPlayerTurn(TrickInfo trickInfo, int playerNum)
-            throws NoStrategyException {
+    private void aiPlayerTurn(TrickInfo trickInfo, int playerNum) {
         
-        int chosenCard = players[playerNum].chooseCard(trickInfo.highestPlay);
+        int chosenCard = 0;
+        try {
+            chosenCard = players[playerNum].chooseCard(trickInfo.highestPlay);
+        } catch (NoStrategyException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
         trickInfo.cardsPlayed.add(chosenCard);
         
         // The last of equally high cards wins the trick,
@@ -87,13 +96,20 @@ public class Game {
         }
     }
     
+    public String showNonAIHand() {
+        return players[0].showHand();
+    }
+    
     // for debugging
-    public StringBuilder showHands() {
+    public String showHands() {
         StringBuilder out = new StringBuilder();
+        
         for (int i = 0; i < players.length; i++) {
-            out.append("Player " + i + ": " + players[i].showHand() + '\n');
+            out.append("Player " + i + ": "
+                    + players[i].showHand() + '\n');
         }
-        return out;
+
+        return out.toString();
     }
     
 }

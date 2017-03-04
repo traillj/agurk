@@ -8,11 +8,11 @@ package strategies;
 import java.util.List;
 
 
+// Assumes hand is sorted
+// Attempt to play highest card at all times if possible
+// Returns the index of the chosen card
 public class SharpStrategy implements Strategy {
 
-    // Assumes hand is sorted
-    // Attempt to play highest card at all times if possible
-    // Returns the index of the chosen card
     @Override
     public int chooseIndex(List<Integer> hand, int highestPlay) {
         int chosenIndex;

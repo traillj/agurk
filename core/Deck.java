@@ -19,8 +19,8 @@ public class Deck {
     private List<Integer> cards;
     private List<Integer> removedCards;
     
-    private static final int MIN_RANK = 2;
-    private static final int MAX_RANK = 14;
+    private static final int MIN_VALUE = 2;
+    private static final int MAX_VALUE = 14;
     private static final int NUM_SUITS = 4;
     
     private static final int HAND_SIZE = 7;
@@ -30,15 +30,15 @@ public class Deck {
         removedCards = new LinkedList<Integer>();
         
         int i, j;
-        for (i = MIN_RANK; i <= MAX_RANK; i++) {
+        for (i = MIN_VALUE; i <= MAX_VALUE; i++) {
             for (j = 0; j <= NUM_SUITS; j++) {
                 cards.add(i);
             }
         }
     }
     
-    // Choose and remove 7 ranks at random from the deck
-    // Returns the ranks in sorted order
+    // Choose and remove 7 cards at random from the deck
+    // Returns the cards in sorted order
     public int[] dealHand() {
         int[] hand = new int[HAND_SIZE];
         Random rand = new Random();
@@ -56,40 +56,59 @@ public class Deck {
         return hand;
     }
     
-    public static StringBuilder cardsToString(List<Integer> cards) {
-        StringBuilder out = new StringBuilder();
+    public static String cardsToString(List<Integer> cards) {
         if (cards.size() == 0) {
-            return out;
+            return "";
         }
         
+        StringBuilder out = new StringBuilder();
         out.append(toSymbol(cards.get(0)));
         for (int i = 1; i < cards.size(); i++) {
             out.append("," + toSymbol(cards.get(i)));
         }
         
-        return out;
+        return out.toString();
     }
     
-    private static char toSymbol(int rank) {
+    private static char toSymbol(int value) {
         char symbol;
-        if (rank < 10 && rank > 1) {
-            symbol = (char)(rank + '0');
-        } else if (rank == 10) {
+        if (value < 10 && value > 1) {
+            symbol = (char)(value + '0');
+        } else if (value == 10) {
             symbol = 'T';
-        } else if (rank == 11) {
+        } else if (value == 11) {
             symbol = 'J';
-        } else if (rank == 12) {
+        } else if (value == 12) {
             symbol = 'Q';
-        } else if (rank == 13) {
+        } else if (value == 13) {
             symbol = 'K';
-        } else if (rank == 14) {
+        } else if (value == 14) {
             symbol = 'A';
         } else {
-            System.err.println("Error: invalid rank");
+            System.err.println("Error: invalid value");
             symbol = 'X';
         }
         
         return symbol;
     }
     
+    public static int toValue(char symbol) {
+        int value;
+        if (symbol == 'T') {
+            value = 10;
+        } else if (symbol == 'J') {
+            value = 11;
+        } else if (symbol == 'Q') {
+            value = 12;
+        } else if (symbol == 'K') {
+            value = 13;
+        } else if (symbol == 'A') {
+            value = 14;
+        } else {
+            System.err.println("Error: Invalid symbol");
+            value = 0;
+        }
+        
+        return value;
+    }
 }

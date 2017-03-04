@@ -5,8 +5,6 @@
 
 package core;
 
-import players.NoStrategyException;
-
 
 public class GameDriver {
 
@@ -18,23 +16,18 @@ public class GameDriver {
         playTrick(game);
     }
     
-    public static void playTrick(Game game) {
+    private static void playTrick(Game game) {
         TrickInfo startTrickInfo, finishTrickInfo;
-        try {
-            startTrickInfo = game.startNonLastTrick();
-            StringBuilder cardsPlayedBefore =
-                    Deck.cardsToString(startTrickInfo.cardsPlayed);
-            System.out.println(cardsPlayedBefore);
-            
-            finishTrickInfo = game.finishNonLastTrick(startTrickInfo);
-            StringBuilder cardsPlayedAfter =
-                    Deck.cardsToString(finishTrickInfo.cardsPlayed);
-            System.out.println(cardsPlayedAfter);
-            
-        } catch (NoStrategyException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-    }
 
+        startTrickInfo = game.startNonLastTrick();
+        String cardsPlayedBefore =
+                Deck.cardsToString(startTrickInfo.cardsPlayed);
+        System.out.println(cardsPlayedBefore);
+        
+        finishTrickInfo = game.finishNonLastTrick(startTrickInfo);
+        String cardsPlayedAfter;
+        cardsPlayedAfter = Deck.cardsToString(finishTrickInfo.cardsPlayed);
+
+        System.out.println(cardsPlayedAfter);
+    }
 }
