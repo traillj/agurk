@@ -8,9 +8,10 @@ package core;
 import java.util.LinkedList;
 import java.util.List;
 
-import players.AIPlayer;
+import players.InputPlayer;
 import players.NoStrategyException;
 import players.Player;
+import players.StrategyPlayer;
 
 import strategies.SharpStrategy;
 
@@ -29,11 +30,11 @@ public class Game {
         deck = new Deck();
         players = new Player[numPlayers];
         
-        players[0] = new Player();
+        players[0] = new InputPlayer();
         players[0].setHand(makePlayerHand());
         
         for (int i = 1; i < numPlayers; i++) {
-            players[i] = new AIPlayer(new SharpStrategy());
+            players[i] = new StrategyPlayer(new SharpStrategy());
             players[i].setHand(makePlayerHand());
         }
     }
@@ -98,6 +99,10 @@ public class Game {
     
     public String showNonAIHand() {
         return players[0].showHand();
+    }
+    
+    public boolean removeNonAICard(int value) {
+        return players[0].removeCard(value);
     }
     
     // for debugging

@@ -94,7 +94,9 @@ public class Deck {
     
     public static int toValue(char symbol) {
         int value;
-        if (symbol == 'T') {
+        if (Character.isDigit(symbol)) {
+            value = Character.getNumericValue(symbol);
+        } else if (symbol == 'T') {
             value = 10;
         } else if (symbol == 'J') {
             value = 11;
@@ -110,5 +112,9 @@ public class Deck {
         }
         
         return value;
+    }
+    
+    public static boolean isValidValue(int value) {
+        return (value >= MIN_VALUE && value <= MAX_VALUE);
     }
 }

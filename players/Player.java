@@ -10,14 +10,13 @@ import java.util.List;
 import core.Deck;
 
 
-public class Player {
+public abstract class Player {
 
     protected List<Integer> hand;
     
     // Keep hand sorted always
     public void setHand(List<Integer> hand) {
         this.hand = hand;
-        
     }
     
     public String showHand() {
@@ -26,5 +25,9 @@ public class Player {
     
     public int chooseCard(int highestPlay) throws NoStrategyException {
         throw new NoStrategyException();
+    }
+    
+    public boolean removeCard(int value) {
+        return false;
     }
 }

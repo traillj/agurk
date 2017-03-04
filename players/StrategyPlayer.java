@@ -8,11 +8,12 @@ package players;
 import strategies.Strategy;
 
 
-public class AIPlayer extends Player {
+// Computer controlled player
+public class StrategyPlayer extends Player {
 
     private Strategy strategy;
     
-    public AIPlayer(Strategy strategy) {
+    public StrategyPlayer(Strategy strategy) {
         this.strategy = strategy;
     }
 
