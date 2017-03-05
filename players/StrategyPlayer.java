@@ -13,7 +13,8 @@ public class StrategyPlayer extends Player {
 
     private Strategy strategy;
     
-    public StrategyPlayer(Strategy strategy) {
+    public StrategyPlayer(String name, Strategy strategy) {
+        super(name);
         this.strategy = strategy;
     }
 

@@ -39,7 +39,7 @@ public class Deck {
     
     // Choose and remove 7 cards at random from the deck
     // Returns the cards in sorted order
-    public int[] dealHand() {
+    public List<Integer> dealHand() {
         int[] hand = new int[HAND_SIZE];
         Random rand = new Random();
         int index, chosenCard;
@@ -53,7 +53,15 @@ public class Deck {
         }
         
         Arrays.sort(hand);
-        return hand;
+        return toList(hand);
+    }
+    
+    private List<Integer> toList(int[] array) {
+        List<Integer> list = new LinkedList<Integer>();
+        for (int item : array) {
+            list.add(item);
+        }
+        return list;
     }
     
     public static String cardsToString(List<Integer> cards) {

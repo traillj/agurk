@@ -22,13 +22,13 @@ public class GameDriver {
         TrickInfo startTrickInfo, finishTrickInfo;
         startTrickInfo = game.startNonLastTrick();
         String cardsPlayedBefore;
-        cardsPlayedBefore = Deck.cardsToString(startTrickInfo.cardsPlayed);
+        cardsPlayedBefore = Deck.cardsToString(startTrickInfo.getCardsPlayed());
         
         char nonAICard = nonAITurn(game, startTrickInfo);
         
         finishTrickInfo = game.finishNonLastTrick(startTrickInfo);
         String cardsPlayedAfter;
-        cardsPlayedAfter = Deck.cardsToString(finishTrickInfo.cardsPlayed);
+        cardsPlayedAfter = Deck.cardsToString(finishTrickInfo.getCardsPlayed());
 
         System.out.println("Played: " + cardsPlayedBefore + ","
                 + nonAICard + "," + cardsPlayedAfter);
@@ -56,7 +56,7 @@ public class GameDriver {
             TrickInfo startTrickInfo) {
         StringBuilder msg = new StringBuilder();
         msg.append("Played: ");
-        msg.append(Deck.cardsToString(startTrickInfo.cardsPlayed));
+        msg.append(Deck.cardsToString(startTrickInfo.getCardsPlayed()));
         
         msg.append("\nHand: " + game.showNonAIHand());
         msg.append("\nChoose: ");

@@ -5,7 +5,7 @@
 
 package core;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import players.InputPlayer;
@@ -21,100 +21,108 @@ import strategies.SharpStrategy;
 public class Game {
 
     private Deck deck;
-    private Player[] players;
+    private List<Player> players;
+    
+    // Game information up to the previous deal
+    private GameInfo gameInfo;
     
     private int leadPlayer = 2;
     
     // Number of players: 2-7
     public Game(int numPlayers) {
         deck = new Deck();
-        players = new Player[numPlayers];
+        players = new ArrayList<Player>();
         
-        players[0] = new InputPlayer();
-        players[0].setHand(makePlayerHand());
+        Player player = new InputPlayer("0");
+        player.setHand(deck.dealHand());
+        players.add(player);
         
-        for (int i = 1; i < numPlayers; i++) {
-            players[i] = new StrategyPlayer(new SharpStrategy());
-            players[i].setHand(makePlayerHand());
+        for (Integer i = 1; i < numPlayers; i++) {
+            player = new StrategyPlayer(i.toString(), new SharpStrategy());
+            player.setHand(deck.dealHand());
+            players.add(player);
         }
-    }
-    
-    private List<Integer> makePlayerHand() {
-        int[] arrayHand = deck.dealHand();
-        List<Integer> listHand = new LinkedList<Integer>();
         
-        for (int card : arrayHand) {
-            listHand.add(card);
-        }
-        return listHand;
+        gameInfo = new GameInfo(numPlayers);
     }
     
     public TrickInfo startNonLastTrick() {
         TrickInfo trickInfo = new TrickInfo();
-        trickInfo.cardsPlayed = new LinkedList<Integer>();
         
         if (leadPlayer == 0) {
             // non-AI player requires external input
             return trickInfo;
         }
         
-        for (int i = leadPlayer; i < players.length; i++) {
-            aiPlayerTurn(trickInfo, i);
+        for (int i = leadPlayer; i < players.size(); i++) {
+            aiTurn(trickInfo, i);
         }
         return trickInfo;
     }
     
     public TrickInfo finishNonLastTrick(TrickInfo trickInfo) {
         TrickInfo newTrickInfo = new TrickInfo();
-        newTrickInfo.cardsPlayed = new LinkedList<Integer>();
         newTrickInfo.highestPlay = trickInfo.highestPlay;
         newTrickInfo.highestPlayPlayer = trickInfo.highestPlayPlayer;
         
         for (int i = 1; i < leadPlayer; i++) {
-            aiPlayerTurn(newTrickInfo, i);
+            aiTurn(newTrickInfo, i);
         }
         
         leadPlayer = newTrickInfo.highestPlayPlayer;
         return newTrickInfo;
     }
     
-    private void aiPlayerTurn(TrickInfo trickInfo, int playerNum) {
-        
+    private void aiTurn(TrickInfo trickInfo, int playerIndex) {
         int chosenCard = 0;
+        Player player = players.get(playerIndex);
         try {
-            chosenCard = players[playerNum].chooseCard(trickInfo.highestPlay);
+            chosenCard = player.chooseCard(trickInfo.highestPlay);
         } catch (NoStrategyException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-        trickInfo.cardsPlayed.add(chosenCard);
         
-        // The last of equally high cards wins the trick,
-        // the winner leads the next trick.
-        if (chosenCard >= trickInfo.highestPlay) {
-            trickInfo.highestPlay = chosenCard;
-            trickInfo.highestPlayPlayer = playerNum;
+        trickInfo.updateTrickInfo(chosenCard, playerIndex);
+    }
+    
+    public GameInfo playlastTrick() {
+        TrickInfo trickInfo = new TrickInfo();
+        
+        for (int i = 0; i < players.size(); i++) {
+            int turn = (i + leadPlayer) % players.size();
+            if (turn == 0) {
+                int chosenCard = players.get(0).playLowestCard();
+                trickInfo.updateTrickInfo(chosenCard, 0);
+            } else {
+                aiTurn(trickInfo, turn);
+            }
         }
+        
+        List<Integer> prevScores = gameInfo.getScores();
+        List<Integer> prevLives = gameInfo.getLives();
+        gameInfo = new GameInfo(leadPlayer, trickInfo, prevScores, prevLives);
+        
+        return gameInfo;
     }
     
     public String showNonAIHand() {
-        return players[0].showHand();
+        return players.get(0).showHand();
     }
     
     public boolean removeNonAICard(int value) {
-        return players[0].removeCard(value);
+        return players.get(0).removeCard(value);
     }
     
     // for debugging
     public String showHands() {
         StringBuilder out = new StringBuilder();
         
-        for (int i = 0; i < players.length; i++) {
+        for (int i = 0; i < players.size(); i++) {
             out.append("Player " + i + ": "
-                    + players[i].showHand() + '\n');
+                    + players.get(i).showHand() + '\n');
         }
 
         return out.toString();
     }
-    
 }

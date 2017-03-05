@@ -8,6 +8,10 @@ package players;
 
 // Player that requires external input
 public class InputPlayer extends Player {
+    
+    public InputPlayer(String name) {
+        super(name);
+    }
 
     public boolean removeCard(int value) {
         
