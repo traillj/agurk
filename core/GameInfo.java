@@ -9,24 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-// Information for the last trick and overall scores and lives.
+// Information for the last trick, and for overall game points and lives.
 public class GameInfo {
     
-    // Minimum score necessary to lose a life
-    private static final int DEATH_SCORE = 21;
+    // Minimum points necessary to lose a life
+    private static final int DEATH_POINTS = 21;
     private static final int INITIAL_LIVES = 2;
     
     private TrickInfo trickInfo;
     private List<Integer> trickPoints;
-    private List<Integer> scores;
+    private List<Integer> gamePoints;
     private List<Integer> lives;
     
     // Initial game information, no tricks played.
-    // Initialises scores and lives.
+    // Initialises game points and lives.
     public GameInfo(int numPlayers) {
-        scores = new ArrayList<Integer>();
+        gamePoints = new ArrayList<Integer>();
         for (int i = 0; i < numPlayers; i++) {
-            scores.add(0);
+            gamePoints.add(0);
         }
         
         lives = new ArrayList<Integer>();
@@ -37,13 +37,13 @@ public class GameInfo {
     
     // Call after the trick is complete
     public GameInfo(int leadPlayer, TrickInfo trickInfo,
-            List<Integer> prevScores, List<Integer> prevLives) {
+            List<Integer> prevGamePoints, List<Integer> prevLives) {
         
         this.trickInfo = trickInfo;
         int numPlayers = prevLives.size();
         computeTrickPoints(leadPlayer, numPlayers);
         
-        boolean lifeLost = updateScores(prevScores);
+        boolean lifeLost = updateGamePoints(prevGamePoints);
         updateLives(prevLives, lifeLost);
     }
     
@@ -68,44 +68,43 @@ public class GameInfo {
     }
     
     // Returns true if the trick winner lost a life
-    private boolean updateScores(List<Integer> prevScores) {
-        int numPlayers = prevScores.size();
-        scores = new ArrayList<Integer>();
+    private boolean updateGamePoints(List<Integer> prevGamePoints) {
+        int numPlayers = prevGamePoints.size();
+        gamePoints = new ArrayList<Integer>();
         for (int i = 0; i < numPlayers; i++) {
-            scores.add(prevScores.get(i));
+            gamePoints.add(prevGamePoints.get(i));
         }
         
         int winnerIndex = trickInfo.highestPlayPlayer;
-        int winnerPrevScore = prevScores.get(winnerIndex);
-        prevScores.set(winnerIndex, winnerPrevScore + trickInfo.highestPlay);
+        int winnerPrevPoints = prevGamePoints.get(winnerIndex);
+        gamePoints.set(winnerIndex, winnerPrevPoints + trickInfo.highestPlay);
         
         boolean lifeLost = false;
-        if (scores.get(winnerIndex) >= DEATH_SCORE) {
+        if (gamePoints.get(winnerIndex) >= DEATH_POINTS) {
             lifeLost = true;
-            // Reset to the next highest score
-            scores.set(winnerIndex, 0);
-            scores.set(winnerIndex, max(scores));
+            // Reset to the next highest points
+            gamePoints.set(winnerIndex, 0);
+            gamePoints.set(winnerIndex, max(gamePoints));
         }
         
-        deductScores(prevScores);
+        deductGamePoints(prevGamePoints);
         return lifeLost;
     }
     
-    // Deduct points after the winner's
-    // score has been completely updated
-    private void deductScores(List<Integer> prevScores) {
-        int numPlayers = prevScores.size();
+    // Deduct points after the winner's points has been completely updated
+    private void deductGamePoints(List<Integer> prevGamePoints) {
+        int numPlayers = prevGamePoints.size();
         for (int i = 0; i < numPlayers; i++) {
             int playerTrickPoints = trickPoints.get(i);
             if (playerTrickPoints < 0) {
-                int prevScore = prevScores.get(i);
-                int newScore = prevScore + playerTrickPoints;
+                int prevPoints = prevGamePoints.get(i);
+                int newPoints = prevPoints + playerTrickPoints;
                 
-                if (newScore < 0) {
-                    // Cannot have negative score
-                    scores.set(i, 0);
+                if (newPoints < 0) {
+                    // Cannot have negative points
+                    gamePoints.set(i, 0);
                 } else {
-                    scores.set(i, newScore);
+                    gamePoints.set(i, newPoints);
                 }
             }
         }
@@ -144,8 +143,8 @@ public class GameInfo {
         return trickPoints;
     }
 
-    public List<Integer> getScores() {
-        return scores;
+    public List<Integer> getGamePoints() {
+        return gamePoints;
     }
 
     public List<Integer> getLives() {

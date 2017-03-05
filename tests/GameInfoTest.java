@@ -20,15 +20,16 @@ public class GameInfoTest {
 
     @Test
     public void gameInfoTest() {
-        GameInfo gameInfo = new GameInfo(3);
+        int numPlayers = 3;
+        GameInfo gameInfo = new GameInfo(numPlayers);
         
         // First trick
-        TrickInfo trickInfo = new TrickInfo();
+        TrickInfo trickInfo = new TrickInfo(numPlayers);
         trickInfo.updateTrickInfo(8, 0);
         trickInfo.updateTrickInfo(10, 1);
         trickInfo.updateTrickInfo(2, 2);
         
-        gameInfo = new GameInfo(0, trickInfo, gameInfo.getScores(),
+        gameInfo = new GameInfo(0, trickInfo, gameInfo.getGamePoints(),
                 gameInfo.getLives());
         
         // Test trick points
@@ -37,31 +38,32 @@ public class GameInfoTest {
         expectedTrickPoints.add(10);
         expectedTrickPoints.add(0);
         assertEquals(
-                expectedTrickPoints.containsAll(gameInfo.getTrickPoints()),
+                gameInfo.getTrickPoints().containsAll(expectedTrickPoints),
                 true);
         
-        // Test scores
-        List<Integer> expectedScores = new ArrayList<Integer>();
-        expectedScores.add(0);
-        expectedScores.add(10);
-        expectedScores.add(0);
-        assertEquals(expectedScores.containsAll(gameInfo.getScores()), true);
+        // Test game points
+        List<Integer> expectedGamePoints = new ArrayList<Integer>();
+        expectedGamePoints.add(0);
+        expectedGamePoints.add(10);
+        expectedGamePoints.add(0);
+        assertEquals(gameInfo.getGamePoints().containsAll(expectedGamePoints),
+                true);
         
         // Test Lives
         List<Integer> expectedLives = new ArrayList<Integer>();
         expectedLives.add(2);
         expectedLives.add(2);
         expectedLives.add(2);
-        assertEquals(expectedLives.containsAll(gameInfo.getLives()), true);
+        assertEquals(gameInfo.getLives().containsAll(expectedLives), true);
         
         
         // Second trick
-        trickInfo = new TrickInfo();
+        trickInfo = new TrickInfo(numPlayers);
         trickInfo.updateTrickInfo(11, 0);
         trickInfo.updateTrickInfo(11, 1);
         trickInfo.updateTrickInfo(2, 2);
         
-        gameInfo = new GameInfo(0, trickInfo, gameInfo.getScores(),
+        gameInfo = new GameInfo(0, trickInfo, gameInfo.getGamePoints(),
                 gameInfo.getLives());
         
         // Test trick points
@@ -70,22 +72,23 @@ public class GameInfoTest {
         expectedTrickPoints.add(11);
         expectedTrickPoints.add(0);
         assertEquals(
-                expectedTrickPoints.containsAll(gameInfo.getTrickPoints()),
+                gameInfo.getTrickPoints().containsAll(expectedTrickPoints),
                 true);
         
-        // Test scores
-        expectedScores = new ArrayList<Integer>();
-        expectedScores.add(0);
-        expectedScores.add(11);
-        expectedScores.add(0);
-        assertEquals(expectedScores.containsAll(gameInfo.getScores()), true);
+        // Test game points
+        expectedGamePoints = new ArrayList<Integer>();
+        expectedGamePoints.add(0);
+        expectedGamePoints.add(0);
+        expectedGamePoints.add(0);
+        assertEquals(gameInfo.getGamePoints().containsAll(expectedGamePoints),
+                true);
         
         // Test Lives
         expectedLives = new ArrayList<Integer>();
         expectedLives.add(2);
         expectedLives.add(1);
         expectedLives.add(2);
-        assertEquals(expectedLives.containsAll(gameInfo.getLives()), true);
+        assertEquals(gameInfo.getLives().containsAll(expectedLives), true);
     }
 
 }

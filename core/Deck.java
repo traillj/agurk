@@ -23,7 +23,7 @@ public class Deck {
     private static final int MAX_VALUE = 14;
     private static final int NUM_SUITS = 4;
     
-    private static final int HAND_SIZE = 7;
+    private static final int HAND_SIZE = 2;
     
     public Deck() {
         cards = new LinkedList<Integer>();
@@ -78,7 +78,7 @@ public class Deck {
         return out.toString();
     }
     
-    private static char toSymbol(int value) {
+    public static char toSymbol(int value) {
         char symbol;
         if (value < 10 && value > 1) {
             symbol = (char)(value + '0');

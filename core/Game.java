@@ -20,10 +20,12 @@ import strategies.SharpStrategy;
 // Player 0 is non-AI
 public class Game {
 
+    private static final String NON_AI_NAME = "0";
+    
     private Deck deck;
     private List<Player> players;
     
-    // Game information up to the previous deal
+    // Game information up to the previous round
     private GameInfo gameInfo;
     
     private int leadPlayer = 2;
@@ -33,7 +35,7 @@ public class Game {
         deck = new Deck();
         players = new ArrayList<Player>();
         
-        Player player = new InputPlayer("0");
+        Player player = new InputPlayer(NON_AI_NAME);
         player.setHand(deck.dealHand());
         players.add(player);
         
@@ -47,7 +49,7 @@ public class Game {
     }
     
     public TrickInfo startNonLastTrick() {
-        TrickInfo trickInfo = new TrickInfo();
+        TrickInfo trickInfo = new TrickInfo(players.size());
         
         if (leadPlayer == 0) {
             // non-AI player requires external input
@@ -61,7 +63,7 @@ public class Game {
     }
     
     public TrickInfo finishNonLastTrick(TrickInfo trickInfo) {
-        TrickInfo newTrickInfo = new TrickInfo();
+        TrickInfo newTrickInfo = new TrickInfo(players.size());
         newTrickInfo.highestPlay = trickInfo.highestPlay;
         newTrickInfo.highestPlayPlayer = trickInfo.highestPlayPlayer;
         
@@ -86,8 +88,8 @@ public class Game {
         trickInfo.updateTrickInfo(chosenCard, playerIndex);
     }
     
-    public GameInfo playlastTrick() {
-        TrickInfo trickInfo = new TrickInfo();
+    public GameInfo playLastTrick() {
+        TrickInfo trickInfo = new TrickInfo(players.size());
         
         for (int i = 0; i < players.size(); i++) {
             int turn = (i + leadPlayer) % players.size();
@@ -99,9 +101,10 @@ public class Game {
             }
         }
         
-        List<Integer> prevScores = gameInfo.getScores();
+        List<Integer> prevGamePoints = gameInfo.getGamePoints();
         List<Integer> prevLives = gameInfo.getLives();
-        gameInfo = new GameInfo(leadPlayer, trickInfo, prevScores, prevLives);
+        gameInfo = new GameInfo(leadPlayer, trickInfo, prevGamePoints,
+                prevLives);
         
         return gameInfo;
     }
@@ -112,6 +115,14 @@ public class Game {
     
     public boolean removeNonAICard(int value) {
         return players.get(0).removeCard(value);
+    }
+    
+    public List<String> getPlayerNames() {
+        List<String> names = new ArrayList<String>();
+        for (Player player : players) {
+            names.add(player.getName());
+        }
+        return names;
     }
     
     // for debugging
