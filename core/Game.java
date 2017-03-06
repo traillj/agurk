@@ -28,27 +28,32 @@ public class Game {
     // Game information up to the previous round
     private GameInfo gameInfo;
     
-    private int leadPlayer = 2;
+    private int handSize;
+    
+    private boolean gameOver = false;
+    private boolean lose = false;
     
     // Number of players: 2-7
-    public Game(int numPlayers) {
+    public Game(int numPlayers, int handSize, int initialLives,
+            int deathPoints) {
+        this.handSize = handSize;
         deck = new Deck();
         players = new ArrayList<Player>();
         
         Player player = new InputPlayer(NON_AI_NAME);
-        player.setHand(deck.dealHand());
+        player.setHand(deck.dealCards(handSize));
         players.add(player);
         
         for (Integer i = 1; i < numPlayers; i++) {
             player = new StrategyPlayer(i.toString(), new SharpStrategy());
-            player.setHand(deck.dealHand());
+            player.setHand(deck.dealCards(handSize));
             players.add(player);
         }
         
-        gameInfo = new GameInfo(numPlayers);
+        gameInfo = new GameInfo(numPlayers, initialLives, deathPoints);
     }
     
-    public TrickInfo startNonLastTrick() {
+    public TrickInfo startNonLastTrick(int leadPlayer) {
         TrickInfo trickInfo = new TrickInfo(players.size());
         
         if (leadPlayer == 0) {
@@ -62,16 +67,20 @@ public class Game {
         return trickInfo;
     }
     
-    public TrickInfo finishNonLastTrick(TrickInfo trickInfo) {
+    public TrickInfo finishNonLastTrick(TrickInfo trickInfo, int leadPlayer) {
         TrickInfo newTrickInfo = new TrickInfo(players.size());
         newTrickInfo.highestPlay = trickInfo.highestPlay;
         newTrickInfo.highestPlayPlayer = trickInfo.highestPlayPlayer;
         
-        for (int i = 1; i < leadPlayer; i++) {
+        int lastPlayer = leadPlayer - 1;
+        if (lastPlayer < 0) {
+            // Player 0 led the trick
+            lastPlayer = players.size() - 1;
+        }
+        for (int i = 1; i <= lastPlayer; i++) {
             aiTurn(newTrickInfo, i);
         }
         
-        leadPlayer = newTrickInfo.highestPlayPlayer;
         return newTrickInfo;
     }
     
@@ -88,25 +97,25 @@ public class Game {
         trickInfo.updateTrickInfo(chosenCard, playerIndex);
     }
     
-    public GameInfo playLastTrick() {
+    public GameInfo playLastTrick(int leadPlayer) {
         TrickInfo trickInfo = new TrickInfo(players.size());
         
         for (int i = 0; i < players.size(); i++) {
             int turn = (i + leadPlayer) % players.size();
-            if (turn == 0) {
-                int chosenCard = players.get(0).playLowestCard();
-                trickInfo.updateTrickInfo(chosenCard, 0);
-            } else {
-                aiTurn(trickInfo, turn);
-            }
+            int chosenCard = players.get(turn).playLowestCard();
+            trickInfo.updateTrickInfo(chosenCard, turn);
         }
         
-        List<Integer> prevGamePoints = gameInfo.getGamePoints();
-        List<Integer> prevLives = gameInfo.getLives();
-        gameInfo = new GameInfo(leadPlayer, trickInfo, prevGamePoints,
-                prevLives);
-        
+        gameInfo = new GameInfo(leadPlayer, trickInfo, gameInfo);
+        dealNewHands();
         return gameInfo;
+    }
+    
+    public void dealNewHands() {
+        deck.resetDeck();
+        for (Player player : players) {
+            player.setHand(deck.dealCards(handSize));
+        }
     }
     
     public String showNonAIHand() {
@@ -123,6 +132,38 @@ public class Game {
             names.add(player.getName());
         }
         return names;
+    }
+    
+    public int removeDeadPlayers() {
+        int index = 0;
+        List<Integer> playersLives =
+                new ArrayList<Integer>(gameInfo.getLives());
+        
+        for (Integer playerLives : playersLives) {
+            if (playerLives == 0) {
+                players.remove(index);
+                gameInfo.removePlayer(index);
+                if (index == 0) {
+                    gameOver = true;
+                    lose = true;
+                }
+            } else {
+                index++;
+            }
+        }
+        
+        if (players.size() == 1) {
+            gameOver = true;
+        }
+        return players.size();
+    }
+    
+    public boolean isGameOver() {
+        return gameOver;
+    }
+    
+    public boolean hasLost() {
+        return lose;
     }
     
     // for debugging

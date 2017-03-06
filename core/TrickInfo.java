@@ -15,9 +15,9 @@ public class TrickInfo {
     public int highestPlay = 0;
     public int highestPlayPlayer = -1;
     
-    public TrickInfo(int numPlayers) {
+    public TrickInfo(int numAlive) {
         cardsPlayed = new ArrayList<Integer>();
-        for (int i = 0; i < numPlayers; i++) {
+        for (int i = 0; i < numAlive; i++) {
             cardsPlayed.add(0);
         }
     }

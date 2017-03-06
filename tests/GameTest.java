@@ -18,15 +18,15 @@ public class GameTest {
     @Test
     public void testNonLastTrick() {
         // 3 players
-        Game game = new Game(3);
+        Game game = new Game(3, 7, 2, 21);
         System.out.println(game.showHands());
         
         // 7 cards per hand initially, last hand has different length
         for (int i = 0; i < 6; i++) {
             int prevHandLength = game.showHands().toString().length();
 
-            TrickInfo startTrickInfo = game.startNonLastTrick();
-            game.finishNonLastTrick(startTrickInfo);
+            TrickInfo startTrickInfo = game.startNonLastTrick(2);
+            game.finishNonLastTrick(startTrickInfo, 2);
             
             System.out.println(game.showHands());
             

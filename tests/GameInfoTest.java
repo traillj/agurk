@@ -20,17 +20,16 @@ public class GameInfoTest {
 
     @Test
     public void gameInfoTest() {
-        int numPlayers = 3;
-        GameInfo gameInfo = new GameInfo(numPlayers);
+        int numAlive = 3;
+        GameInfo gameInfo = new GameInfo(numAlive, 2, 21);
         
         // First trick
-        TrickInfo trickInfo = new TrickInfo(numPlayers);
+        TrickInfo trickInfo = new TrickInfo(numAlive);
         trickInfo.updateTrickInfo(8, 0);
         trickInfo.updateTrickInfo(10, 1);
         trickInfo.updateTrickInfo(2, 2);
         
-        gameInfo = new GameInfo(0, trickInfo, gameInfo.getGamePoints(),
-                gameInfo.getLives());
+        gameInfo = new GameInfo(0, trickInfo, gameInfo);
         
         // Test trick points
         List<Integer> expectedTrickPoints = new ArrayList<Integer>();
@@ -58,13 +57,12 @@ public class GameInfoTest {
         
         
         // Second trick
-        trickInfo = new TrickInfo(numPlayers);
+        trickInfo = new TrickInfo(numAlive);
         trickInfo.updateTrickInfo(11, 0);
         trickInfo.updateTrickInfo(11, 1);
         trickInfo.updateTrickInfo(2, 2);
         
-        gameInfo = new GameInfo(0, trickInfo, gameInfo.getGamePoints(),
-                gameInfo.getLives());
+        gameInfo = new GameInfo(0, trickInfo, gameInfo);
         
         // Test trick points
         expectedTrickPoints = new ArrayList<Integer>();

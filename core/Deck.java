@@ -23,7 +23,6 @@ public class Deck {
     private static final int MAX_VALUE = 14;
     private static final int NUM_SUITS = 4;
     
-    private static final int HAND_SIZE = 2;
     
     public Deck() {
         cards = new LinkedList<Integer>();
@@ -37,14 +36,14 @@ public class Deck {
         }
     }
     
-    // Choose and remove 7 cards at random from the deck
-    // Returns the cards in sorted order
-    public List<Integer> dealHand() {
-        int[] hand = new int[HAND_SIZE];
+    // Choose and remove the specified number of cards at random
+    // from the deck. Returns the cards in sorted order.
+    public List<Integer> dealCards(int numCards) {
+        int[] hand = new int[numCards];
         Random rand = new Random();
         int index, chosenCard;
         
-        for (int i = 0; i < HAND_SIZE; i++) {
+        for (int i = 0; i < numCards; i++) {
             index = rand.nextInt(cards.size());
             chosenCard = cards.remove(index);
             
@@ -54,6 +53,11 @@ public class Deck {
         
         Arrays.sort(hand);
         return toList(hand);
+    }
+    
+    public void resetDeck() {
+        cards.addAll(removedCards);
+        removedCards.clear();
     }
     
     private List<Integer> toList(int[] array) {
