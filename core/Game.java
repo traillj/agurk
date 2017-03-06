@@ -16,24 +16,40 @@ import players.StrategyPlayer;
 import strategies.SharpStrategy;
 
 
-// Methods for playing components of the game
-// Player 0 is non-AI
+/**
+ * Contains playing components and game information.
+ * The player indexed at 0 is the non-AI player.
+ */
 public class Game {
 
+    /** Name of the non-AI player. */
     private static final String NON_AI_NAME = "0";
     
+    /** Rank-only standard deck of 52 cards. */
     private Deck deck;
+    
+    /** Players of the game. */
     private List<Player> players;
     
-    // Game information up to the previous round
+    /** Game information up to the previous round. */
     private GameInfo gameInfo;
     
+    /** Number of cards held by each player at the start of a trick. */
     private int handSize;
     
+    /** True if the game has ended. */
     private boolean gameOver = false;
+    /** True if the non-AI player has lost. */
     private boolean lose = false;
     
-    // Number of players: 2-7
+    /**
+     * Creates a new Game object.
+     * @param numPlayers Number of players.
+     * @param handSize Number of cards held by each player
+     *        at the start of a trick.
+     * @param initialLives Starting number of lives.
+     * @param deathPoints Minimum points necessary to lose a life.
+     */
     public Game(int numPlayers, int handSize, int initialLives,
             int deathPoints) {
         this.handSize = handSize;
@@ -53,6 +69,11 @@ public class Game {
         gameInfo = new GameInfo(numPlayers, initialLives, deathPoints);
     }
     
+    /**
+     * Starts the trick up to the non-AI player's turn.
+     * @param leadPlayer The player to lead the trick.
+     * @return Information about the trick.
+     */
     public TrickInfo startNonLastTrick(int leadPlayer) {
         TrickInfo trickInfo = new TrickInfo(players.size());
         
@@ -67,10 +88,17 @@ public class Game {
         return trickInfo;
     }
     
+    /**
+     * Finishes the trick after the non-AI player's turn.
+     * @param trickInfo Information that includes the highest play and
+     *        corresponding player of the trick so far.
+     * @param leadPlayer The player that led the trick.
+     * @return New information about the trick only.
+     */
     public TrickInfo finishNonLastTrick(TrickInfo trickInfo, int leadPlayer) {
         TrickInfo newTrickInfo = new TrickInfo(players.size());
-        newTrickInfo.highestPlay = trickInfo.highestPlay;
-        newTrickInfo.highestPlayPlayer = trickInfo.highestPlayPlayer;
+        newTrickInfo.setHighestPlay(trickInfo.getHighestPlay());
+        newTrickInfo.setHighestPlayPlayer(trickInfo.getHighestPlayPlayer());
         
         int lastPlayer = leadPlayer - 1;
         if (lastPlayer < 0) {
@@ -84,11 +112,16 @@ public class Game {
         return newTrickInfo;
     }
     
+    /**
+     * Gets a card from an AI player and updates the trick information.
+     * @param trickInfo Information about the trick.
+     * @param playerIndex The AI player's index.
+     */
     private void aiTurn(TrickInfo trickInfo, int playerIndex) {
         int chosenCard = 0;
         Player player = players.get(playerIndex);
         try {
-            chosenCard = player.chooseCard(trickInfo.highestPlay);
+            chosenCard = player.chooseCard(trickInfo.getHighestPlay());
         } catch (NoStrategyException e) {
             System.err.println(e.getMessage());
             System.exit(1);
@@ -97,6 +130,11 @@ public class Game {
         trickInfo.updateTrickInfo(chosenCard, playerIndex);
     }
     
+    /**
+     * Plays the last trick.
+     * @param leadPlayer The player to lead the trick.
+     * @return Complete information about the last trick.
+     */
     public GameInfo playLastTrick(int leadPlayer) {
         TrickInfo trickInfo = new TrickInfo(players.size());
         
@@ -111,21 +149,36 @@ public class Game {
         return gameInfo;
     }
     
-    public void dealNewHands() {
+    /**
+     * Deals a new set of hands.
+     */
+    private void dealNewHands() {
         deck.resetDeck();
         for (Player player : players) {
             player.setHand(deck.dealCards(handSize));
         }
     }
     
+    /**
+     * Shows the non-AI player's hand.
+     * @return Representation of the non-AI player's cards.
+     */
     public String showNonAIHand() {
         return players.get(0).showHand();
     }
     
-    public boolean removeNonAICard(int value) {
-        return players.get(0).removeCard(value);
+    /**
+     * Removes the first card with the specified value.
+     * @param value Rank of the card to remove.
+     */
+    public void removeNonAICard(int value) {
+        players.get(0).removeCard(value);
     }
     
+    /**
+     * Gets the names of the players.
+     * @return The player names.
+     */
     public List<String> getPlayerNames() {
         List<String> names = new ArrayList<String>();
         for (Player player : players) {
@@ -134,6 +187,10 @@ public class Game {
         return names;
     }
     
+    /**
+     * Removes dead players from the game information.
+     * @return The number of remaining players.
+     */
     public int removeDeadPlayers() {
         int index = 0;
         List<Integer> playersLives =
@@ -158,10 +215,18 @@ public class Game {
         return players.size();
     }
     
+    /**
+     * Tests if the game is over.
+     * @return True if the game has ended.
+     */
     public boolean isGameOver() {
         return gameOver;
     }
     
+    /**
+     * Tests if the game has been lost.
+     * @return True if the non-AI player has lost.
+     */
     public boolean hasLost() {
         return lose;
     }
